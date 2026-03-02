@@ -268,3 +268,34 @@ PatchCore is non-parametrics: kNN distance to memory
 
 PaDiM is parametrics: mahalonobis under Gaussian
 
+
+
+
+
+## System Design
+Example: Design a defective phone detection system
+1. Problem definition
+    1. real-time or offline?
+    2. defect types known or unknown?
+    3. pixel-level or image-level? 
+2. Modeling choice
+    1. If known defects: supervised detection/segmentation
+    2. If unknown defects: anomaly detection (PatchCore, PaDiM, DRAEM)
+
+3. Data strategy
+    1. data collection
+    2. annotation
+    3. class imbalance
+    3. hard negative mining
+    4. active learning 
+
+4. Evaluation
+    1. precision/recall tradeoff
+    2. per-defect metrics
+    3. production monitoring
+
+5. Deployment
+    1. latency budget
+    2. hardware target
+    3. fallback logic
+    4. human review loop 

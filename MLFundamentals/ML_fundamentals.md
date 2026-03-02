@@ -18,6 +18,8 @@ ViT:
 
 Attention is $O(N^2D)$
 
+##### Q: Significance of Residual Networks
+They solved one of the biggest bottlenecks in deep learning: training very deep neural networks reliably by using skip connections 
 
 #### Output size for a conv layer:
 
@@ -78,6 +80,20 @@ So complexity is $O(N^2D)$. Common ways to reduce:
 
 ---
 ## Object Detection
+```
+Image -> backbone -> neck -> detection head -> prediction
+```
+- Backbone = feature extractor
+    - extracts hierarchical features
+    - low-level: edges, texture
+    - mid-level: parts
+    - high-level: semantics
+- Neck = feature fusion
+    - fuses and enhances multi-scale features from the backbone to make them more suitable for detection
+    - FPN is the most common neck
+- Head = task predictor
+    - converts features into: class scores, bounding boxes, and masks
+    - RTMDet, FCOS are anchor-free heads
 
 #### Q: What is NMS
 Non-Maximum Suppression removes duplicate overlapping detections by:
@@ -131,5 +147,3 @@ keep high-confidence predictions
     ↓
 retrain model
 ```
-
-
