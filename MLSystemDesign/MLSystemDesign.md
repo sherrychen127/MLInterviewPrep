@@ -8,6 +8,79 @@ Serving predictions in production requires a robust architectrue that can handle
 
 client -> load balancer -> inference API -> Feature store/feature cache layer -> inference cache -> Model server -> Logging store 
 
+--- 
+## ML System Design Template
+Problem clarification
+  1. who are the users?
+  2. what is the input and output?
+  3. real-time or batch?
+  4. how many requests per second?
+  5. latency target?
+  6. accuracy/business metric?
+  7. freshness requirement?
+  8. is explainability important?
+  9. what happens if model is unavailable?
+
+Functional requirements
+  1. ingest articles/events/documents
+  2. generate predictions or ranked results
+  3. log user feedback
+  4. update features/models
+  5. support admin/model rollout/monitoring
+
+
+Non-functional requirements:
+  1. latency: p95 under 200ms
+  2. throughput: 10k QPS
+  3. availability: 99.9%
+  4. durability of logs
+  5. fault tolerance
+  6. scalability
+  7. freshness
+  8. security/compliance
+
+High-level architecture
+
+Data flow
+
+ML design
+  1. training data
+  2. features
+  3. candidate generation vs ranking
+  4. offline vs online inference
+  5. model deployment
+  6. feedback loop 
+  7. monitoring 
+
+
+Storage strategy
+   1. SQL vs NoSQL
+   2. cache
+   3.  object store
+   4.  feature store
+   5.  search index / vector DB if needed
+   6.  sharding/replication/partitioning
+
+
+Reliability and failure handling
+  1.  retries
+  2.  timeout
+  3.  circuit breakers
+  4.  fallback logic
+  5.  dead-letter queues
+  6.  graceful degradation
+
+
+Testing strategy
+   1.  unit
+   2.  integration
+   3.  load
+   4.  shadow/canary
+   5.  offline evaluation
+   6.  A/B test
+   7.  data quality tests 
+
+
 ## Case Study: Visual Search System
 ### 1. Problem Definition
 
@@ -445,33 +518,46 @@ Solutions
 
 
 
+## Case Study: Personalized News Recommendation 
 
-## Notes: ML-powered recommendation system
-We can apply these principles to a concrete case, such as designing a recommendation system for a streaming platform like Netflix.
+The problem statement is to design a system that recommends relevant financial/news articles to each user. 
 
-> Problem statement: Design a system that provides personalized movie recommendations, updates based on user activity, and returns results in under 200ms.
+**Requirements**
+Functional requriements:
+- ingest articles from publishers/wires
+- maintain user profiles and reading history
+- rank candidate articles for a user
+- return top K articles quickly
+- log impressions/clicks/dwell time 
+- retrain/update models periodically
+- handle cold start for new users and new articles 
 
-The following are the requirements that we’ll consider for this design problem:
+Non-functional requirements:
+- p95 latency under 200ms
+- high read traffic, 20k+ QPS at peak
+- freshness
+- 99.9% availability
+- graceful degradation
+- support A/B experiments 
 
-- Personalization: Suggestions must match the user’s history.
-- Freshness: Recommendations update shortly after a user watches a video.
-- Latency: Must be under 200ms at p99.
-
-
-Next, consider the high-level architecture for this recommendation system:
-
-1. Data ingestion streams user viewing history and ratings via Kafka.
-2. Data preprocessing uses Spark jobs to compute user and item embeddings. A feature store manages real-time user features.
-3. Model training involves a two-tower neural network trained to predict user-item affinity.
-4. Candidate generation uses FAISS to retrieve the top 500 relevant movies from a pool of millions.
-5. Ranking uses a heavy ranking model to score the 500 candidates for precise ordering.
-6. In the model serving, the ranking model is deployed via TensorFlow Serving behind a load balancer.
-7. Top recommendations are cached in Redis to serve subsequent page loads instantly.
+**Data flow**
+Offline / ingestion path
+1. articles arrive from feeds/publishers
+2. content is cleaned, enriched, tagged by topic/ticker/entity 
+3. 
 
 
-Each interaction updates the user’s feature vector in the feature store, influencing the next retrieval and ranking step in near real-time.
-
-
+```
+Article Ingestion ---> Article Store / Index ----\
+                                                  \
+User Request --> LB --> Reco Service --> Candidate Retrieval --> Ranker --> Response
+                     |         |                |                |
+                     |         |                |                --> Model Server
+                     |         |                --> Cache
+                     |         --> User Profile / Feature Store
+                     |
+                     --> Impression/Click Logs --> Kafka --> Stream/Batch Pipeline --> Training
+```
 
 ## Comparison
 
