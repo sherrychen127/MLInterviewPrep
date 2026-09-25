@@ -682,7 +682,7 @@ LoRA parameterize weight matrix into two small matrix with lower rank than full 
 - Personalization 
 
 
-
+---
 
 ## Case Study: Bloomberg
 1. Multi-source data ingestion 
